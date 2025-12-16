@@ -1,14 +1,15 @@
 import logging
 import time
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 
 from src.config import get_settings
 from src.database import init_db
 from src.logging import setup_logging
-from src.routers import health
+from src.routers import admin, health
 from src.services.scheduler import shutdown_scheduler, start_scheduler
 
 setup_logging()
@@ -56,6 +57,21 @@ async def catch_exceptions_middleware(request: Request, call_next):
         )
 
 app.include_router(health.router)
+app.include_router(admin.router)
+
+@app.get("/")
+async def root():
+    return {
+        "message": (
+            "Backend API is running. Visit /docs for API documentation "
+            "or /admin/dashboard for the admin interface."
+        )
+    }
+
+@app.get("/admin/dashboard")
+async def admin_dashboard():
+    static_dir = Path(__file__).parent / "static"
+    return FileResponse(static_dir / "admin.html")
 
 if __name__ == "__main__":
     import uvicorn
