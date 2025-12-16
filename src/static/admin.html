@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 32px;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            margin-top: 8px;
+            opacity: 0.9;
+        }
+        
+        .auth-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .auth-container h2 {
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            color: #667eea;
+        }
+        
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .card h2 {
+            margin-bottom: 16px;
+            color: #667eea;
+            font-size: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #5568d3;
+        }
+        
+        button.secondary {
+            background: #6c757d;
+        }
+        
+        button.secondary:hover {
+            background: #5a6268;
+        }
+        
+        button.danger {
+            background: #dc3545;
+        }
+        
+        button.danger:hover {
+            background: #c82333;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .badge.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge.danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .badge.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .badge.info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+        
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h2 {
+            color: #667eea;
+        }
+        
+        .close-btn {
+            background: none;
+            color: #999;
+            font-size: 24px;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+        
+        .close-btn:hover {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div id="authContainer" class="auth-container">
+        <h2>Admin Dashboard Login</h2>
+        <div class="form-group">
+            <label>API Key</label>
+            <input type="password" id="apiKeyInput" placeholder="Enter your API key">
+        </div>
+        <button onclick="authenticate()">Login</button>
+        <div id="authError" class="alert error hidden" style="margin-top: 16px;">
+            Invalid API key
+        </div>
+    </div>
+
+    <div id="dashboardContainer" class="hidden">
+        <header>
+            <div class="container">
+                <h1>Admin Dashboard</h1>
+                <p class="subtitle">Manage configurations, monitor jobs, and control uploads</p>
+            </div>
+        </header>
+
+        <div class="container">
+            <div id="alertContainer"></div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('overview')">Overview</button>
+                <button class="tab" onclick="switchTab('channels')">Channels</button>
+                <button class="tab" onclick="switchTab('schedules')">Schedules</button>
+                <button class="tab" onclick="switchTab('jobs')">Job History</button>
+                <button class="tab" onclick="switchTab('uploads')">Uploads</button>
+                <button class="tab" onclick="switchTab('actions')">Actions</button>
+            </div>
+
+            <div id="overview" class="tab-content active">
+                <div class="stats-grid" id="statsGrid"></div>
+                
+                <div class="card">
+                    <h2>Recent Jobs</h2>
+                    <table id="recentJobsTable">
+                        <thead>
+                            <tr>
+                                <th>Job Name</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Start Time</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="channels" class="tab-content">
+                <div class="card">
+                    <h2>Channel Configuration</h2>
+                    <button onclick="showCreateChannelModal()">Create New Channel</button>
+                    <div style="margin-top: 20px;">
+                        <table id="channelsTable">
+                            <thead>
+                                <tr>
+                                    <th>Channel Name</th>
+                                    <th>Content Type</th>
+                                    <th>Video Length</th>
+                                    <th>AI Provider</th>
+                                    <th>YouTube Connected</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="schedules" class="tab-content">
+                <div class="card">
+                    <h2>Upload Schedules</h2>
+                    <button onclick="showCreateScheduleModal()">Create New Schedule</button>
+                    <div style="margin-top: 20px;">
+                        <table id="schedulesTable">
+                            <thead>
+                                <tr>
+                                    <th>Channel ID</th>
+                                    <th>Frequency</th>
+                                    <th>Preferred Time</th>
+                                    <th>Timezone</th>
+                                    <th>Active</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="jobs" class="tab-content">
+                <div class="card">
+                    <h2>Job Run History</h2>
+                    <button onclick="loadJobHistory()">Refresh</button>
+                    <div style="margin-top: 20px;">
+                        <table id="jobHistoryTable">
+                            <thead>
+                                <tr>
+                                    <th>Job Name</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Upcoming Scheduled Jobs</h2>
+                    <div id="upcomingJobs"></div>
+                </div>
+            </div>
+
+            <div id="uploads" class="tab-content">
+                <div class="card">
+                    <h2>Upload History</h2>
+                    <button onclick="loadUploadHistory()">Refresh</button>
+                    <div style="margin-top: 20px;">
+                        <table id="uploadHistoryTable">
+                            <thead>
+                                <tr>
+                                    <th>Channel ID</th>
+                                    <th>Video Title</th>
+                                    <th>Video ID</th>
+                                    <th>Status</th>
+                                    <th>Upload Time</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="actions" class="tab-content">
+                <div class="card">
+                    <h2>Manual Actions</h2>
+                    
+                    <div class="form-group">
+                        <label>Trigger YouTube OAuth</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="number" id="oauthChannelId" placeholder="Channel ID">
+                            <button onclick="triggerOAuth()">Trigger OAuth</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Test AI Generation</label>
+                        <textarea id="aiTestDetails" rows="3" placeholder="Optional details"></textarea>
+                        <button onclick="testAIGeneration()">Test AI Generation</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Queue Manual Upload</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="number" id="uploadChannelId" placeholder="Channel ID">
+                            <button onclick="queueManualUpload()">Queue Upload</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="channelModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Channel Configuration</h2>
+                <button class="close-btn" onclick="closeModal('channelModal')">&times;</button>
+            </div>
+            <form id="channelForm">
+                <div class="form-group">
+                    <label>Channel Name *</label>
+                    <input type="text" id="channelName" required>
+                </div>
+                <div class="form-group">
+                    <label>Channel ID *</label>
+                    <input type="text" id="channelId" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="channelDescription" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Content Type</label>
+                    <select id="contentType">
+                        <option value="educational">Educational</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="tutorial">Tutorial</option>
+                        <option value="review">Review</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Video Length</label>
+                    <select id="videoLength">
+                        <option value="short">Short (< 1 min)</option>
+                        <option value="medium">Medium (1-5 min)</option>
+                        <option value="long">Long (> 5 min)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Video Style</label>
+                    <select id="videoStyle">
+                        <option value="informative">Informative</option>
+                        <option value="casual">Casual</option>
+                        <option value="professional">Professional</option>
+                        <option value="humorous">Humorous</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>AI Provider</label>
+                    <select id="aiProvider">
+                        <option value="openai">OpenAI</option>
+                        <option value="anthropic">Anthropic</option>
+                    </select>
+                </div>
+                <button type="submit">Save Channel</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="scheduleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Schedule Configuration</h2>
+                <button class="close-btn" onclick="closeModal('scheduleModal')">&times;</button>
+            </div>
+            <form id="scheduleForm">
+                <div class="form-group">
+                    <label>Channel ID *</label>
+                    <input type="number" id="scheduleChannelId" required>
+                </div>
+                <div class="form-group">
+                    <label>Frequency</label>
+                    <select id="scheduleFrequency">
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Preferred Time (HH:MM)</label>
+                    <input type="time" id="preferredTime" value="09:00">
+                </div>
+                <div class="form-group">
+                    <label>Timezone</label>
+                    <input type="text" id="timezone" value="UTC">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="isActive" checked> Active
+                    </label>
+                </div>
+                <button type="submit">Save Schedule</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let apiKey = '';
+
+        function authenticate() {
+            apiKey = document.getElementById('apiKeyInput').value;
+            
+            fetch('/admin/status', {
+                headers: { 'X-API-Key': apiKey }
+            })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('authContainer').classList.add('hidden');
+                    document.getElementById('dashboardContainer').classList.remove('hidden');
+                    loadDashboard();
+                } else {
+                    document.getElementById('authError').classList.remove('hidden');
+                }
+            })
+            .catch(() => {
+                document.getElementById('authError').classList.remove('hidden');
+            });
+        }
+
+        function apiRequest(url, options = {}) {
+            return fetch(url, {
+                ...options,
+                headers: {
+                    'X-API-Key': apiKey,
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                }
+            });
+        }
+
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert ${type}`;
+            alert.textContent = message;
+            alertContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+            
+            if (tabName === 'overview') loadOverview();
+            if (tabName === 'channels') loadChannels();
+            if (tabName === 'schedules') loadSchedules();
+            if (tabName === 'jobs') { loadJobHistory(); loadUpcomingJobs(); }
+            if (tabName === 'uploads') loadUploadHistory();
+        }
+
+        function loadDashboard() {
+            loadOverview();
+        }
+
+        async function loadOverview() {
+            const status = await apiRequest('/admin/status').then(r => r.json());
+            
+            const statsGrid = document.getElementById('statsGrid');
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-label">Total Channels</div>
+                    <div class="stat-value">${status.total_channels}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Schedules</div>
+                    <div class="stat-value">${status.active_schedules}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Recent Jobs</div>
+                    <div class="stat-value">${status.recent_job_count}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Failed Jobs</div>
+                    <div class="stat-value">${status.failed_job_count}</div>
+                </div>
+            `;
+            
+            const jobs = await apiRequest('/admin/jobs/history?limit=5').then(r => r.json());
+            const tbody = document.querySelector('#recentJobsTable tbody');
+            tbody.innerHTML = jobs.map(job => `
+                <tr>
+                    <td>${job.job_name}</td>
+                    <td><span class="badge info">${job.job_type}</span></td>
+                    <td><span class="badge ${job.status === 'success' ? 'success' : job.status === 'failure' ? 'danger' : 'warning'}">${job.status}</span></td>
+                    <td>${new Date(job.start_time).toLocaleString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadChannels() {
+            const channels = await apiRequest('/admin/channels').then(r => r.json());
+            const tbody = document.querySelector('#channelsTable tbody');
+            tbody.innerHTML = channels.map(channel => `
+                <tr>
+                    <td>${channel.channel_name}</td>
+                    <td>${channel.content_type}</td>
+                    <td>${channel.video_length}</td>
+                    <td>${channel.ai_provider}</td>
+                    <td><span class="badge ${channel.youtube_connected ? 'success' : 'danger'}">${channel.youtube_connected ? 'Yes' : 'No'}</span></td>
+                    <td class="actions">
+                        <button class="btn-small" onclick="editChannel(${channel.id})">Edit</button>
+                        <button class="btn-small danger" onclick="deleteChannel(${channel.id})">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadSchedules() {
+            const schedules = await apiRequest('/admin/schedules').then(r => r.json());
+            const tbody = document.querySelector('#schedulesTable tbody');
+            tbody.innerHTML = schedules.map(schedule => `
+                <tr>
+                    <td>${schedule.channel_id}</td>
+                    <td>${schedule.frequency}</td>
+                    <td>${schedule.preferred_time}</td>
+                    <td>${schedule.timezone}</td>
+                    <td><span class="badge ${schedule.is_active ? 'success' : 'danger'}">${schedule.is_active ? 'Yes' : 'No'}</span></td>
+                    <td class="actions">
+                        <button class="btn-small" onclick="editSchedule(${schedule.id})">Edit</button>
+                        <button class="btn-small danger" onclick="deleteSchedule(${schedule.id})">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadJobHistory() {
+            const jobs = await apiRequest('/admin/jobs/history').then(r => r.json());
+            const tbody = document.querySelector('#jobHistoryTable tbody');
+            tbody.innerHTML = jobs.map(job => `
+                <tr>
+                    <td>${job.job_name}</td>
+                    <td><span class="badge info">${job.job_type}</span></td>
+                    <td><span class="badge ${job.status === 'success' ? 'success' : job.status === 'failure' ? 'danger' : 'warning'}">${job.status}</span></td>
+                    <td>${new Date(job.start_time).toLocaleString()}</td>
+                    <td>${job.end_time ? new Date(job.end_time).toLocaleString() : 'N/A'}</td>
+                    <td>${job.details || 'N/A'}</td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadUpcomingJobs() {
+            const jobs = await apiRequest('/admin/jobs/upcoming').then(r => r.json());
+            const container = document.getElementById('upcomingJobs');
+            container.innerHTML = jobs.length ? `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Job Name</th>
+                            <th>Next Run Time</th>
+                            <th>Trigger</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${jobs.map(job => `
+                            <tr>
+                                <td>${job.name || job.id}</td>
+                                <td>${job.next_run_time ? new Date(job.next_run_time).toLocaleString() : 'N/A'}</td>
+                                <td>${job.trigger}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            ` : '<p>No upcoming jobs scheduled</p>';
+        }
+
+        async function loadUploadHistory() {
+            const uploads = await apiRequest('/admin/uploads/history').then(r => r.json());
+            const tbody = document.querySelector('#uploadHistoryTable tbody');
+            tbody.innerHTML = uploads.map(upload => `
+                <tr>
+                    <td>${upload.channel_id}</td>
+                    <td>${upload.video_title}</td>
+                    <td>${upload.video_id || 'N/A'}</td>
+                    <td><span class="badge ${upload.status === 'success' ? 'success' : 'danger'}">${upload.status}</span></td>
+                    <td>${new Date(upload.upload_time).toLocaleString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        function showCreateChannelModal() {
+            document.getElementById('channelForm').reset();
+            document.getElementById('channelModal').classList.add('active');
+        }
+
+        function showCreateScheduleModal() {
+            document.getElementById('scheduleForm').reset();
+            document.getElementById('scheduleModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        document.getElementById('channelForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                channel_name: document.getElementById('channelName').value,
+                channel_id: document.getElementById('channelId').value,
+                description: document.getElementById('channelDescription').value,
+                content_type: document.getElementById('contentType').value,
+                video_length: document.getElementById('videoLength').value,
+                video_style: document.getElementById('videoStyle').value,
+                ai_provider: document.getElementById('aiProvider').value
+            };
+            
+            const response = await apiRequest('/admin/channels', {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+            
+            if (response.ok) {
+                showAlert('Channel created successfully');
+                closeModal('channelModal');
+                loadChannels();
+            } else {
+                const error = await response.json();
+                showAlert(error.detail || 'Failed to create channel', 'error');
+            }
+        });
+
+        document.getElementById('scheduleForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                channel_id: parseInt(document.getElementById('scheduleChannelId').value),
+                frequency: document.getElementById('scheduleFrequency').value,
+                preferred_time: document.getElementById('preferredTime').value,
+                timezone: document.getElementById('timezone').value,
+                is_active: document.getElementById('isActive').checked
+            };
+            
+            const response = await apiRequest('/admin/schedules', {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+            
+            if (response.ok) {
+                showAlert('Schedule created successfully');
+                closeModal('scheduleModal');
+                loadSchedules();
+            } else {
+                const error = await response.json();
+                showAlert(error.detail || 'Failed to create schedule', 'error');
+            }
+        });
+
+        async function deleteChannel(id) {
+            if (!confirm('Are you sure you want to delete this channel?')) return;
+            
+            const response = await apiRequest(`/admin/channels/${id}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                showAlert('Channel deleted successfully');
+                loadChannels();
+            } else {
+                showAlert('Failed to delete channel', 'error');
+            }
+        }
+
+        async function deleteSchedule(id) {
+            if (!confirm('Are you sure you want to delete this schedule?')) return;
+            
+            const response = await apiRequest(`/admin/schedules/${id}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                showAlert('Schedule deleted successfully');
+                loadSchedules();
+            } else {
+                showAlert('Failed to delete schedule', 'error');
+            }
+        }
+
+        async function triggerOAuth() {
+            const channelId = document.getElementById('oauthChannelId').value;
+            
+            if (!channelId) {
+                showAlert('Please enter a channel ID', 'error');
+                return;
+            }
+            
+            const response = await apiRequest(`/admin/actions/trigger-oauth?channel_id=${channelId}`, {
+                method: 'POST'
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                showAlert('OAuth flow initiated. Opening authorization URL...');
+                window.open(data.oauth_url, '_blank');
+            } else {
+                const error = await response.json();
+                showAlert(error.detail || 'Failed to trigger OAuth', 'error');
+            }
+        }
+
+        async function testAIGeneration() {
+            const details = document.getElementById('aiTestDetails').value;
+            
+            const response = await apiRequest('/admin/actions/test-ai-generation', {
+                method: 'POST',
+                body: JSON.stringify({
+                    job_name: 'test_ai_generation',
+                    details: details || 'Manual test from admin dashboard'
+                })
+            });
+            
+            if (response.ok) {
+                showAlert('AI generation test completed successfully');
+                document.getElementById('aiTestDetails').value = '';
+            } else {
+                showAlert('Failed to test AI generation', 'error');
+            }
+        }
+
+        async function queueManualUpload() {
+            const channelId = document.getElementById('uploadChannelId').value;
+            
+            if (!channelId) {
+                showAlert('Please enter a channel ID', 'error');
+                return;
+            }
+            
+            const response = await apiRequest(`/admin/actions/queue-upload?channel_id=${channelId}`, {
+                method: 'POST'
+            });
+            
+            if (response.ok) {
+                showAlert('Upload queued successfully');
+                document.getElementById('uploadChannelId').value = '';
+            } else {
+                const error = await response.json();
+                showAlert(error.detail || 'Failed to queue upload', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
