@@ -8,8 +8,9 @@ from fastapi.responses import JSONResponse
 from src.config import get_settings
 from src.database import init_db
 from src.logging import setup_logging
-from src.routers import health
+from src.routers import coordinator, health
 from src.services.scheduler import shutdown_scheduler, start_scheduler
+from src.services.scheduler_manager import sync_all_jobs
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -20,6 +21,7 @@ async def lifespan(app: FastAPI):
     logger.info("Starting up application")
     init_db()
     start_scheduler()
+    sync_all_jobs()
     yield
     # Shutdown
     logger.info("Shutting down application")
@@ -56,6 +58,7 @@ async def catch_exceptions_middleware(request: Request, call_next):
         )
 
 app.include_router(health.router)
+app.include_router(coordinator.router)
 
 if __name__ == "__main__":
     import uvicorn

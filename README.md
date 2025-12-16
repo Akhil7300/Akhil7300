@@ -50,8 +50,67 @@ Documentation is available at http://localhost:8000/docs.
 The project uses SQLModel (SQLAlchemy) for database interactions.
 
 - **ChannelConfig**: Stores channel configuration.
-- **SchedulePreference**: Stores scheduling preferences for channels.
-- **JobRunHistory**: Stores the history of background jobs.
+- **ContentConfig**: Stores content generation configuration for channels.
+- **SchedulePreference**: Stores scheduling preferences for channels (frequency, timezone, etc.).
+- **JobRunHistory**: Stores the history of background jobs with status, video URLs, and error messages.
+
+## Automation Workflow
+
+The system implements a comprehensive automation workflow for scheduled video uploads:
+
+### Components
+
+1. **Coordinator Service** (`src/services/coordinator.py`)
+   - Orchestrates the entire upload workflow
+   - Reads channel and content configuration from database
+   - Invokes AI generation pipeline
+   - Uploads via YouTube client
+   - Logs all operations with structured logging
+   - Records job outcomes in database
+
+2. **APScheduler Integration** (`src/services/scheduler.py`, `src/services/scheduler_manager.py`)
+   - Registers per-channel jobs with user-selected cadence and timezones
+   - Persists job state in database (SQLAlchemy job store)
+   - Automatically syncs jobs from database on startup
+   - Calculates and tracks next run times
+
+3. **AI Generation** (`src/services/ai_generator.py`)
+   - Generates video content (title, description, script, tags)
+   - Supports multiple AI models (OpenAI, Anthropic)
+   - Falls back to placeholder content if no API key provided
+
+4. **YouTube Client** (`src/services/youtube_client.py`)
+   - Handles video uploads to YouTube
+   - Returns video URL on success
+   - Falls back to mock uploads if no API key provided
+
+5. **Alert Service** (`src/services/alert_service.py`)
+   - Sends success/failure alerts
+   - Placeholder implementations for email and webhook alerts
+   - Extensible for production integrations
+
+### API Endpoints
+
+- `POST /coordinator/trigger` - Manually trigger an upload for a specific channel
+- `GET /coordinator/jobs/history` - Get job execution history (filterable by channel)
+- `POST /coordinator/jobs/register/{channel_id}` - Register a scheduled job
+- `DELETE /coordinator/jobs/unregister/{channel_id}` - Unregister a scheduled job
+
+### Job Status Tracking
+
+Each job execution is tracked with:
+- Start and end times
+- Status (running, success, failure)
+- Video URL (on success)
+- Error message (on failure)
+- Additional details
+
+### Logging
+
+The system uses structured JSON logging for comprehensive observability:
+- All operations are logged with context
+- Errors include stack traces
+- Request/response timing tracked via middleware
 
 ## Development Tools
 
